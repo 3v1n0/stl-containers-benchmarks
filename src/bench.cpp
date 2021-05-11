@@ -274,10 +274,16 @@ struct bench_random_remove {
         bench<std::forward_list<T>, microseconds, FilledRandom, Erase>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Erase>("deque",  sizes);
 
+        bench<std::vector<T>, microseconds, FilledRandom, EraseShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, EraseShrink>("deque shrink",  sizes);
+
         bench<std::vector<T>, microseconds, FilledRandom, RemoveErase>("vector rem", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RemoveErase>("list rem",   sizes);
         bench<std::forward_list<T>, microseconds, FilledRandom, RemoveErase>("forward_list rem", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RemoveErase>("deque rem",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledRandom, RemoveEraseShrink>("vector rem shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, RemoveEraseShrink>("deque rem shrink",  sizes);
     }
 };
 
@@ -291,6 +297,9 @@ struct bench_erase_front {
         bench<std::list<T>,   microseconds, FilledRandom, EraseFront>("list",   sizes);
         bench<std::forward_list<T>, microseconds, FilledRandom, EraseFront>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, EraseFront>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledRandom, EraseFrontShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, EraseFrontShrink>("deque shrink",  sizes);
     }
 };
 
@@ -304,6 +313,9 @@ struct bench_erase_middle {
         bench<std::list<T>,   microseconds, FilledRandom, EraseMiddle>("list",   sizes);
         bench<std::forward_list<T>, microseconds, FilledRandom, EraseMiddle>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, EraseMiddle>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledRandom, EraseMiddleShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, EraseMiddleShrink>("deque shrink",  sizes);
     }
 };
 
@@ -317,6 +329,9 @@ struct bench_erase_back {
         bench<std::list<T>,   microseconds, FilledRandom, EraseBack>("list",   sizes);
         bench<std::forward_list<T>, microseconds, FilledRandom, EraseBack>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, EraseBack>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledRandom, EraseBackShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, EraseBackShrink>("deque shrink",  sizes);
     }
 };
 
@@ -369,6 +384,9 @@ struct bench_erase_1 {
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase1>("list",   sizes);
         bench<std::forward_list<T>, microseconds, FilledRandom, RandomErase1>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase1>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledRandom, RandomErase1Shrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, RandomErase1Shrink>("deque shrink",  sizes);
     }
 };
 
@@ -382,6 +400,9 @@ struct bench_erase_10 {
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase10>("list",   sizes);
         bench<std::forward_list<T>, microseconds, FilledRandom, RandomErase10>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase10>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledRandom, RandomErase10Shrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, RandomErase10Shrink>("deque shrink",  sizes);
     }
 };
 
@@ -421,6 +442,9 @@ struct bench_full_erase {
         bench<std::list<T>,   microseconds, FilledRandom, FullErase>("list",   sizes);
         bench<std::forward_list<T>, microseconds, FilledRandom, FullErase>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, FullErase>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledRandom, FullEraseShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, FullEraseShrink>("deque shrink",  sizes);
     }
 };
 

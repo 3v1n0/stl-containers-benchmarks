@@ -60,6 +60,14 @@ constexpr void container_push_value_fastest(Container& container, T const& value
         container.push_back({value});
 }
 
+template<class Container, template <class T> class BaseTest>
+struct Shrink : BaseTest<Container> {
+    inline static void run(Container &c, std::size_t size){
+        BaseTest<Container>::run(c, size);
+        c.shrink_to_fit();
+    }
+};
+
 //Prepare data for fill back
 template<class Container>
 struct EmptyPrepareBackup {
@@ -447,6 +455,8 @@ struct Erase {
     }
 };
 
+template<class Container> using EraseShrink = Shrink<Container, Erase>;
+
 template<class Container>
 struct RemoveErase {
     inline static void run(Container &c, std::size_t){
@@ -457,6 +467,8 @@ struct RemoveErase {
             c.erase(std::remove_if(begin(c), end(c), [&](decltype(*begin(c)) v){ return v.a < 1000; }), end(c));
     }
 };
+
+template<class Container> using RemoveEraseShrink = Shrink<Container, RemoveErase>;
 
 template<class Container>
 struct EraseFront {
@@ -473,6 +485,8 @@ struct EraseFront {
             c.erase(it);
     }
 };
+
+template<class Container> using EraseFrontShrink = Shrink<Container, EraseFront>;
 
 template<class Container>
 struct EraseMiddle {
@@ -492,6 +506,8 @@ struct EraseMiddle {
     }
 };
 
+template<class Container> using EraseMiddleShrink = Shrink<Container, EraseMiddle>;
+
 template<class Container>
 struct EraseBack {
     inline static void run(Container &c, std::size_t){
@@ -510,6 +526,8 @@ struct EraseBack {
         }
     }
 };
+
+template<class Container> using EraseBackShrink = Shrink<Container, EraseBack>;
 
 //Sort the container
 
@@ -607,6 +625,7 @@ struct RandomErase1 {
 
 template<class Container> std::mt19937 RandomErase1<Container>::generator;
 template<class Container> std::uniform_int_distribution<std::size_t> RandomErase1<Container>::distribution(0, 10000);
+template<class Container> using RandomErase1Shrink = Shrink<Container, RandomErase1>;
 
 template<class Container>
 struct RandomErase10 {
@@ -636,6 +655,7 @@ struct RandomErase10 {
 
 template<class Container> std::mt19937 RandomErase10<Container>::generator;
 template<class Container> std::uniform_int_distribution<std::size_t> RandomErase10<Container>::distribution(0, 10000);
+template<class Container> using RandomErase10Shrink = Shrink<Container, RandomErase10>;
 
 template<class Container>
 struct RandomErase25 {
@@ -712,6 +732,8 @@ struct FullErase {
         }
     }
 };
+
+template<class Container> using FullEraseShrink = Shrink<Container, FullErase>;
 
 // Note: This is probably erased completely for a vector
 template<class Container>
