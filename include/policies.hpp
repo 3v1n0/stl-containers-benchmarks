@@ -5,6 +5,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#include <type_traits>
+
 // create policies
 
 //Create empty container
@@ -17,17 +19,48 @@ struct Empty {
     inline static void clean(){}
 };
 
-//Prepare data for fill back
+template<class Container>
+constexpr bool is_forward_list() {
+    return std::is_same_v<Container, std::forward_list<typename Container::value_type>>;
+}
 
+template<class Container>
+constexpr bool has_random_insert() {
+    return !is_forward_list<Container>();
+}
+
+template<class Container>
+constexpr bool has_native_size() {
+    return !is_forward_list<Container>();
+}
+
+template<class Container>
+constexpr bool can_push_back() {
+    return !is_forward_list<Container>();
+}
+
+template<class Container, typename T>
+constexpr void container_push_value(Container& container, T const& value) {
+    if constexpr (!has_random_insert<Container>())
+        container.push_front({value});
+    else
+        container.push_back({value});
+}
+
+//Prepare data for fill back
 template<class Container>
 struct EmptyPrepareBackup {
     static std::vector<typename Container::value_type> v;
     inline static Container make(std::size_t size) {
-        if(v.size() != size){
+        bool size_changed = true;
+        if constexpr (has_native_size<Container>())
+            size_changed = v.size() != size;
+
+        if(size_changed){
             v.clear();
             v.reserve(size);
             for(std::size_t i = 0; i < size; ++i){
-                v.push_back({i});
+                container_push_value(v, i);
             }
         }
 
@@ -56,11 +89,15 @@ struct FilledRandom {
     static std::vector<typename Container::value_type> v;
     inline static Container make(std::size_t size){
         // prepare randomized data that will have all the integers from the range
-        if(v.size() != size){
+        bool size_changed = true;
+        if constexpr (has_native_size<Container>())
+            size_changed = v.size() != size;
+
+        if(size_changed){
             v.clear();
             v.reserve(size);
             for(std::size_t i = 0; i < size; ++i){
-                v.push_back({i});
+                container_push_value(v, i);
             }
             std::shuffle(begin(v), end(v), std::mt19937());
         }
@@ -68,7 +105,7 @@ struct FilledRandom {
         // fill with randomized data
         Container container;
         for(std::size_t i = 0; i < size; ++i){
-            container.push_back(v[i]);
+            container_push_value(container, v[i]);
         }
 
         return container;
@@ -87,20 +124,22 @@ template<class Container>
 struct FilledRandomInsert {
     static std::vector<typename Container::value_type> v;
     inline static Container make(std::size_t size){
-        // prepare randomized data that will have all the integers from the range
-        if(v.size() != size){
-            v.clear();
-            v.reserve(size);
-            for(std::size_t i = 0; i < size; ++i){
-                v.push_back({i});
-            }
-            std::shuffle(begin(v), end(v), std::mt19937());
-        }
-
-        // fill with randomized data
         Container container;
-        for(std::size_t i = 0; i < size; ++i){
-            container.insert(v[i]);
+        if constexpr (has_random_insert<Container>()) {
+            // prepare randomized data that will have all the integers from the range
+            if(v.size() != size){
+                v.clear();
+                v.reserve(size);
+                for(std::size_t i = 0; i < size; ++i){
+                    container_push_value(v, i);
+                }
+                std::shuffle(begin(v), end(v), std::mt19937());
+            }
+
+            // fill with randomized data
+            for(std::size_t i = 0; i < size; ++i){
+                container.insert(v[i]);
+            }
         }
 
         return container;
@@ -128,18 +167,22 @@ template<class Container>
 struct BackupSmartFilled {
     static std::vector<typename Container::value_type> v;
     inline static std::unique_ptr<Container> make(std::size_t size){
-        if(v.size() != size){
+        bool size_changed = true;
+        if constexpr (has_native_size<Container>())
+            size_changed = v.size() != size;
+
+        if(size_changed){
             v.clear();
             v.reserve(size);
             for(std::size_t i = 0; i < size; ++i){
-                v.push_back({i});
+                container_push_value(v, i);
             }
         }
 
         std::unique_ptr<Container> container(new Container());
 
         for(std::size_t i = 0; i < size; ++i){
-            container->push_back(v[i]);
+            container_push_value(*container, v[i]);
         }
 
         return container;
@@ -174,8 +217,10 @@ template<class Container>
 struct InsertSimple {
     static const typename Container::value_type value;
     inline static void run(Container &c, std::size_t size){
-        for(size_t i=0; i<size; ++i){
-            c.insert(value);
+        if constexpr (has_random_insert<Container>()) {
+            for(size_t i=0; i<size; ++i){
+                c.insert(value);
+            }
         }
     }
 };
@@ -187,8 +232,10 @@ template<class Container>
 struct FillBack {
     static const typename Container::value_type value;
     inline static void run(Container &c, std::size_t size){
-        for(size_t i=0; i<size; ++i){
-            c.push_back(value);
+        if constexpr (can_push_back<Container>()) {
+            for(size_t i=0; i<size; ++i){
+                container_push_value(c, value);
+            }
         }
     }
 };
@@ -199,8 +246,10 @@ const typename Container::value_type FillBack<Container>::value{};
 template<class Container>
 struct FillBackBackup {
     inline static void run(Container &c, std::size_t size){
-        for(size_t i=0; i<size; ++i){
-            c.push_back(EmptyPrepareBackup<Container>::v[i]);
+        if constexpr (can_push_back<Container>()) {
+            for(size_t i=0; i<size; ++i){
+                container_push_value(c, EmptyPrepareBackup<Container>::v[i]);
+            }
         }
     }
 };
@@ -218,8 +267,10 @@ template<class Container> const typename Container::value_type FillBackInserter<
 template<class Container>
 struct EmplaceBack {
     inline static void run(Container &c, std::size_t size){
-        for(size_t i=0; i<size; ++i){
-            c.emplace_back();
+        if constexpr (can_push_back<Container>()) {
+            for(size_t i=0; i<size; ++i){
+                c.emplace_back();
+            }
         }
     }
 };
@@ -293,10 +344,12 @@ template<class Container>
 struct Insert {
     static std::array<typename Container::value_type, 1000> values;
     inline static void run(Container &c, std::size_t){
-        for(std::size_t i=0; i<1000; ++i) {
-            // hand written comparison to eliminate temporary object creation
-            auto it = std::find_if(std::begin(c), std::end(c), [&](decltype(*std::begin(c)) v){ return v.a == i; });
-            c.insert(it, values[i]);
+        if constexpr (has_random_insert<Container>()) {
+            for(std::size_t i=0; i<1000; ++i) {
+                // hand written comparison to eliminate temporary object creation
+                auto it = std::find_if(std::begin(c), std::end(c), [&](decltype(*std::begin(c)) v){ return v.a == i; });
+                c.insert(it, values[i]);
+            }
         }
     }
 };
@@ -333,7 +386,10 @@ struct Erase {
     inline static void run(Container &c, std::size_t){
         for(std::size_t i=0; i<1000; ++i) {
             // hand written comparison to eliminate temporary object creation
-            c.erase(std::find_if(std::begin(c), std::end(c), [&](decltype(*std::begin(c)) v){ return v.a == i; }));
+            if constexpr (!has_random_insert<Container>())
+                c.remove_if([&](decltype(*begin(c)) v){ return v.a == i; });
+            else
+                c.erase(std::find_if(std::begin(c), std::end(c), [&](decltype(*std::begin(c)) v){ return v.a == i; }));
         }
     }
 };
@@ -342,7 +398,10 @@ template<class Container>
 struct RemoveErase {
     inline static void run(Container &c, std::size_t){
         // hand written comparison to eliminate temporary object creation
-        c.erase(std::remove_if(begin(c), end(c), [&](decltype(*begin(c)) v){ return v.a < 1000; }), end(c));
+        if constexpr (!has_random_insert<Container>())
+            c.remove_if([&](decltype(*begin(c)) v){ return v.a < 1000; });
+        else
+            c.erase(std::remove_if(begin(c), end(c), [&](decltype(*begin(c)) v){ return v.a < 1000; }), end(c));
     }
 };
 
@@ -398,10 +457,12 @@ struct RandomSortedInsert {
     static std::uniform_int_distribution<std::size_t> distribution;
 
     inline static void run(Container &c, std::size_t size){
-        for(std::size_t i=0; i<size; ++i){
-            auto val = distribution(generator);
-            // hand written comparison to eliminate temporary object creation
-            c.insert(std::find_if(begin(c), end(c), [&](decltype(*begin(c)) v){ return v.a >= val; }), {val});
+        if constexpr (has_random_insert<Container>()) {
+            for(std::size_t i=0; i<size; ++i){
+                auto val = distribution(generator);
+                // hand written comparison to eliminate temporary object creation
+                c.insert(std::find_if(begin(c), end(c), [&](decltype(*begin(c)) v){ return v.a >= val; }), {val});
+            }
         }
     }
 };
@@ -416,16 +477,25 @@ struct RandomErase1 {
 
     inline static void run(Container &c, std::size_t /*size*/){
         auto it = c.begin();
+        decltype(c.begin()) before;
+
+        if constexpr (!has_random_insert<Container>())
+            before = c.before_begin();
 
         while(it != c.end()){
             if(distribution(generator) > 9900){
-                it = c.erase(it);
+                if constexpr (!has_random_insert<Container>())
+                    it = c.erase_after(before);
+                else
+                    it = c.erase(it);
             } else {
+                before = it;
                 ++it;
             }
         }
 
-        std::cout << c.size() << std::endl;
+        if constexpr (has_native_size<Container>())
+            std::cout << c.size() << std::endl;
     }
 };
 
@@ -439,11 +509,19 @@ struct RandomErase10 {
 
     inline static void run(Container &c, std::size_t /*size*/){
         auto it = c.begin();
+        decltype(c.begin()) before;
+
+        if constexpr (!has_random_insert<Container>())
+            before = c.before_begin();
 
         while(it != c.end()){
             if(distribution(generator) > 9000){
-                it = c.erase(it);
+                if constexpr (!has_random_insert<Container>())
+                    it = c.erase_after(before);
+                else
+                    it = c.erase(it);
             } else {
+                before = it;
                 ++it;
             }
         }
@@ -460,11 +538,19 @@ struct RandomErase25 {
 
     inline static void run(Container &c, std::size_t /*size*/){
         auto it = c.begin();
+        decltype(c.begin()) before;
+
+        if constexpr (!has_random_insert<Container>())
+            before = c.before_begin();
 
         while(it != c.end()){
             if(distribution(generator) > 7500){
-                it = c.erase(it);
+                if constexpr (!has_random_insert<Container>())
+                    it = c.erase_after(before);
+                else
+                    it = c.erase(it);
             } else {
+                before = it;
                 ++it;
             }
         }
@@ -481,11 +567,19 @@ struct RandomErase50 {
 
     inline static void run(Container &c, std::size_t /*size*/){
         auto it = c.begin();
+        decltype(c.begin()) before;
+
+        if constexpr (!has_random_insert<Container>())
+            before = c.before_begin();
 
         while(it != c.end()){
             if(distribution(generator) > 5000){
-                it = c.erase(it);
+                if constexpr (!has_random_insert<Container>())
+                    it = c.erase_after(before);
+                else
+                    it = c.erase(it);
             } else {
+                before = it;
                 ++it;
             }
         }

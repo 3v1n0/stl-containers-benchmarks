@@ -9,6 +9,7 @@
 #include <array>
 #include <vector>
 #include <list>
+#include <forward_list>
 #include <algorithm>
 #include <deque>
 #include <thread>
@@ -164,6 +165,7 @@ struct bench_fill_back {
         auto sizes = { 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 };
         bench<std::vector<T>, microseconds, Empty, FillBack>("vector", sizes);
         bench<std::list<T>,   microseconds, Empty, FillBack>("list",   sizes);
+        // bench<std::forward_list<T>, microseconds, Empty, FillBack>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, Empty, FillBack>("deque",  sizes);
 
         bench<std::vector<T>, microseconds, Empty, ReserveSize, FillBack>("vector reserve", sizes);
@@ -178,6 +180,7 @@ struct bench_emplace_back {
         auto sizes = { 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 };
         bench<std::vector<T>, microseconds, Empty, EmplaceBack>("vector", sizes);
         bench<std::list<T>,   microseconds, Empty, EmplaceBack>("list",   sizes);
+        // bench<std::forward_list<T>, microseconds, Empty, EmplaceBack>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, Empty, EmplaceBack>("deque",  sizes);
         bench<std::vector<T>, microseconds, Empty, ReserveSize, EmplaceBack>("vector reserve", sizes);
     }
@@ -196,6 +199,7 @@ struct bench_fill_front {
         }
 
         bench<std::list<T>,   microseconds, Empty, FillFront>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, Empty, FillFront>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, Empty, FillFront>("deque",  sizes);
     }
 };
@@ -213,6 +217,7 @@ struct bench_emplace_front {
         }
 
         bench<std::list<T>,   microseconds, Empty, EmplaceFront>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, Empty, EmplaceFront>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, Empty, EmplaceFront>("deque",  sizes);
     }
 };
@@ -225,6 +230,7 @@ struct bench_linear_search {
         auto sizes = {1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000};
         bench<std::vector<T>, microseconds, FilledRandom, Find>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Find>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, Find>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Find>("deque",  sizes);
     }
 };
@@ -237,6 +243,7 @@ struct bench_random_insert {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, milliseconds, FilledRandom, Insert>("vector", sizes);
         bench<std::list<T>,   milliseconds, FilledRandom, Insert>("list",   sizes);
+        // bench<std::forward_list<T>, milliseconds, FilledRandom, Insert>("forward_list", sizes);
         bench<std::deque<T>,  milliseconds, FilledRandom, Insert>("deque",  sizes);
     }
 };
@@ -249,10 +256,12 @@ struct bench_random_remove {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, Erase>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Erase>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, Erase>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Erase>("deque",  sizes);
 
         bench<std::vector<T>, microseconds, FilledRandom, RemoveErase>("vector rem", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RemoveErase>("list rem",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, RemoveErase>("forward_list rem", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RemoveErase>("deque rem",  sizes);
     }
 };
@@ -265,6 +274,7 @@ struct bench_sort {
         auto sizes = {100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000};
         bench<std::vector<T>, milliseconds, FilledRandom, Sort>("vector", sizes);
         bench<std::list<T>,   milliseconds, FilledRandom, Sort>("list",   sizes);
+        // bench<std::forward_list>,   milliseconds, FilledRandom, Sort>("forward_list", sizes);
         bench<std::deque<T>,  milliseconds, FilledRandom, Sort>("deque",  sizes);
     }
 };
@@ -277,6 +287,7 @@ struct bench_destruction {
         auto sizes = {100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000};
         bench<std::vector<T>, microseconds, SmartFilled, SmartDelete>("vector", sizes);
         bench<std::list<T>,   microseconds, SmartFilled, SmartDelete>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, SmartFilled, SmartDelete>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, SmartFilled, SmartDelete>("deque",  sizes);
     }
 };
@@ -289,6 +300,7 @@ struct bench_number_crunching {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, milliseconds, Empty, RandomSortedInsert>("vector", sizes);
         bench<std::list<T>,   milliseconds, Empty, RandomSortedInsert>("list",   sizes);
+        // bench<std::forward_list<T>, milliseconds, Empty, RandomSortedInsert>("forward_list", sizes);
         bench<std::deque<T>,  milliseconds, Empty, RandomSortedInsert>("deque",  sizes);
     }
 };
@@ -301,6 +313,7 @@ struct bench_erase_1 {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase1>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase1>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, RandomErase1>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase1>("deque",  sizes);
     }
 };
@@ -313,6 +326,7 @@ struct bench_erase_10 {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase10>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase10>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, RandomErase10>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase10>("deque",  sizes);
     }
 };
@@ -325,6 +339,7 @@ struct bench_erase_25 {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase25>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase25>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, RandomErase25>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase25>("deque",  sizes);
     }
 };
@@ -337,6 +352,7 @@ struct bench_erase_50 {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase50>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase50>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, RandomErase50>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase50>("deque",  sizes);
     }
 };
@@ -349,6 +365,7 @@ struct bench_traversal {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, Iterate>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Iterate>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, Iterate>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Iterate>("deque",  sizes);
     }
 };
@@ -361,6 +378,7 @@ struct bench_write {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, Write>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Write>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, Write>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Write>("deque",  sizes);
     }
 };
@@ -373,6 +391,7 @@ struct bench_find {
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, Find>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Find>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, Find>("forward_list", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Find>("deque",  sizes);
     }
 };
