@@ -5,8 +5,6 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include <boost/intrusive/list.hpp>
-
 // create policies
 
 //Create empty container
@@ -364,13 +362,6 @@ struct Sort<std::list<T> > {
     }
 };
 
-template<class T>
-struct Sort<boost::intrusive::list<T, boost::intrusive::constant_time_size<false>>> {
-    inline static void run(boost::intrusive::list<T, boost::intrusive::constant_time_size<false>>& c, std::size_t){
-        c.sort();
-    }
-};
-
 template<class Container>
 struct TimSort {
     inline static void run(Container &c, std::size_t){
@@ -390,13 +381,6 @@ struct Reverse {
 template<class T>
 struct Reverse<std::list<T> > {
     inline static void run(std::list<T> &c, std::size_t){
-        c.reverse();
-    }
-};
-
-template<class T>
-struct Reverse<boost::intrusive::list<T, boost::intrusive::constant_time_size<false>>> {
-    inline static void run(boost::intrusive::list<T, boost::intrusive::constant_time_size<false>>& c, std::size_t){
         c.reverse();
     }
 };
