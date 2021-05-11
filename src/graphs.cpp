@@ -5,6 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
@@ -44,7 +45,8 @@ bool numeric_cmp(const std::string& lhs, const std::string& rhs){
 
 void graphs::output(Output output){
     if(output == Output::GOOGLE){
-        std::ofstream file("graph.html");
+        std::time_t tm = std::time(nullptr);
+        std::ofstream file("graph_" + std::to_string(tm) + ".html");
 
         file << "<html>" << std::endl;
         file << "<head>" << std::endl;
