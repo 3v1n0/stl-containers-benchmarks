@@ -19,9 +19,6 @@
 #include <set>
 #include <unordered_set>
 
-#include "plf_timsort.h"
-#include "plf_colony.h"
-
 #include "bench.hpp"
 #include "policies.hpp"
 
@@ -170,12 +167,6 @@ struct bench_fill_back {
         bench<std::deque<T>,  microseconds, Empty, FillBack>("deque",  sizes);
 
         bench<std::vector<T>, microseconds, Empty, ReserveSize, FillBack>("vector_reserve", sizes);
-
-        bench<plf::colony<T>, microseconds, Empty, InsertSimple>("colony",  sizes);
-        bench<plf::colony<T>, microseconds, Empty, ReserveSize, InsertSimple>("colony_reserve", sizes);
-
-        bench<plf::colony<T,std::allocator<T>, unsigned int>, microseconds, Empty, InsertSimple>("colony",  sizes);
-        bench<plf::colony<T,std::allocator<T>, unsigned int>, microseconds, Empty, ReserveSize, InsertSimple>("colony_reserve", sizes);
     }
 };
 
@@ -188,9 +179,7 @@ struct bench_emplace_back {
         bench<std::vector<T>, microseconds, Empty, EmplaceBack>("vector", sizes);
         bench<std::list<T>,   microseconds, Empty, EmplaceBack>("list",   sizes);
         bench<std::deque<T>,  microseconds, Empty, EmplaceBack>("deque",  sizes);
-        bench<plf::colony<T>, microseconds, Empty, EmplaceInsertSimple>("colony",  sizes);
         bench<std::vector<T>, microseconds, Empty, ReserveSize, EmplaceBack>("vector_reserve", sizes);
-        bench<plf::colony<T>, microseconds, Empty, ReserveSize, EmplaceInsertSimple>("colony_reserve",  sizes);
     }
 };
 
@@ -208,7 +197,6 @@ struct bench_fill_front {
 
         bench<std::list<T>,   microseconds, Empty, FillFront>("list",   sizes);
         bench<std::deque<T>,  microseconds, Empty, FillFront>("deque",  sizes);
-        // colony is unordered
     }
 };
 
@@ -226,7 +214,6 @@ struct bench_emplace_front {
 
         bench<std::list<T>,   microseconds, Empty, EmplaceFront>("list",   sizes);
         bench<std::deque<T>,  microseconds, Empty, EmplaceFront>("deque",  sizes);
-        // colony is unordered
     }
 };
 
@@ -239,7 +226,6 @@ struct bench_linear_search {
         bench<std::vector<T>, microseconds, FilledRandom, Find>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Find>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Find>("deque",  sizes);
-        bench<plf::colony<T>, microseconds, FilledRandomInsert, Find>("colony",  sizes);
     }
 };
 
@@ -252,7 +238,6 @@ struct bench_random_insert {
         bench<std::vector<T>, milliseconds, FilledRandom, Insert>("vector", sizes);
         bench<std::list<T>,   milliseconds, FilledRandom, Insert>("list",   sizes);
         bench<std::deque<T>,  milliseconds, FilledRandom, Insert>("deque",  sizes);
-        // colony is unordered
     }
 };
 
@@ -265,12 +250,10 @@ struct bench_random_remove {
         bench<std::vector<T>, microseconds, FilledRandom, Erase>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Erase>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Erase>("deque",  sizes);
-        bench<plf::colony<T>,  microseconds, FilledRandomInsert, Erase>("colony",  sizes);
 
         bench<std::vector<T>, microseconds, FilledRandom, RemoveErase>("vector_rem", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RemoveErase>("list_rem",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RemoveErase>("deque_rem",  sizes);
-        bench<plf::colony<T>,  microseconds, FilledRandomInsert, RemoveErase>("colony_rem",  sizes);
     }
 };
 
@@ -283,8 +266,6 @@ struct bench_sort {
         bench<std::vector<T>, milliseconds, FilledRandom, Sort>("vector", sizes);
         bench<std::list<T>,   milliseconds, FilledRandom, Sort>("list",   sizes);
         bench<std::deque<T>,  milliseconds, FilledRandom, Sort>("deque",  sizes);
-        bench<plf::colony<T>,  milliseconds, FilledRandomInsert, Sort>("colony",  sizes);
-        bench<plf::colony<T>,  milliseconds, FilledRandomInsert, TimSort>("colony_timsort",  sizes);
     }
 };
 
@@ -297,7 +278,6 @@ struct bench_destruction {
         bench<std::vector<T>, microseconds, SmartFilled, SmartDelete>("vector", sizes);
         bench<std::list<T>,   microseconds, SmartFilled, SmartDelete>("list",   sizes);
         bench<std::deque<T>,  microseconds, SmartFilled, SmartDelete>("deque",  sizes);
-        bench<plf::colony<T>,  microseconds, SmartFilled, SmartDelete>("colony",  sizes);
     }
 };
 
@@ -310,7 +290,6 @@ struct bench_number_crunching {
         bench<std::vector<T>, milliseconds, Empty, RandomSortedInsert>("vector", sizes);
         bench<std::list<T>,   milliseconds, Empty, RandomSortedInsert>("list",   sizes);
         bench<std::deque<T>,  milliseconds, Empty, RandomSortedInsert>("deque",  sizes);
-        // colony is unordered
     }
 };
 
@@ -323,7 +302,6 @@ struct bench_erase_1 {
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase1>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase1>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase1>("deque",  sizes);
-        bench<plf::colony<T>,  microseconds, FilledRandomInsert, RandomErase1>("colony",  sizes);
     }
 };
 
@@ -336,7 +314,6 @@ struct bench_erase_10 {
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase10>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase10>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase10>("deque",  sizes);
-        bench<plf::colony<T>,  microseconds, FilledRandomInsert, RandomErase10>("colony",  sizes);
     }
 };
 
@@ -349,7 +326,6 @@ struct bench_erase_25 {
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase25>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase25>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase25>("deque",  sizes);
-        bench<plf::colony<T>,  microseconds, FilledRandomInsert, RandomErase25>("colony",  sizes);
     }
 };
 
@@ -362,7 +338,6 @@ struct bench_erase_50 {
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase50>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase50>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, RandomErase50>("deque",  sizes);
-        bench<plf::colony<T>,  microseconds, FilledRandomInsert, RandomErase50>("colony",  sizes);
     }
 };
 
@@ -375,7 +350,6 @@ struct bench_traversal {
         bench<std::vector<T>, microseconds, FilledRandom, Iterate>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Iterate>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Iterate>("deque",  sizes);
-        bench<plf::colony<T>, microseconds, FilledRandomInsert, Iterate>("colony",  sizes);
     }
 };
 
@@ -388,7 +362,6 @@ struct bench_write {
         bench<std::vector<T>, microseconds, FilledRandom, Write>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Write>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Write>("deque",  sizes);
-        bench<plf::colony<T>, microseconds, FilledRandomInsert, Write>("colony",  sizes);
     }
 };
 
@@ -401,7 +374,6 @@ struct bench_find {
         bench<std::vector<T>, microseconds, FilledRandom, Find>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Find>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Find>("deque",  sizes);
-        bench<plf::colony<T>, microseconds, FilledRandomInsert, Find>("colony",  sizes);
     }
 };
 
