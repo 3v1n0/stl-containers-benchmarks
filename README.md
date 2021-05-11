@@ -3,8 +3,13 @@ This is a set of STL containers benchmarks forked from
 
 ### Build and run
 
-    meson _build
-    meson test -C _build --benchmark bench -v
+```bash
+meson _build
+meson test -C _build --benchmark bench -v
+
+# A single benchmark can be ran using the bench name as listed via:
+#meson test -C _build --benchmark --list
+```
 
 Results are saved in the `_build` directory in html format, using google
 graphs (kudos to Baptiste!).

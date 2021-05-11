@@ -463,6 +463,22 @@ struct bench_traversal {
 };
 
 template<typename T>
+struct bench_traversal_and_clear {
+    static const std::string name() { return "traversal_and_clear"; }
+    static void run(){
+        new_graph<T>(name(), "us");
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledRandom, IterateAndClear>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledRandom, IterateAndClear>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, IterateAndClear>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, IterateAndClear>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledRandom, IterateAndClearShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, IterateAndClearShrink>("deque shrink",  sizes);
+    }
+};
+
+template<typename T>
 struct bench_write {
     static const std::string name() { return "write"; }
     static void run(){
@@ -537,9 +553,10 @@ void bench_simpler(){
 }
 
 int main(){
-    const char *bench = getenv("BENCH");
+    const char *bench_env = getenv("BENCH");
+    std::string bench(bench_env ? bench_env : "");
 
-    if (bench && std::string(bench) == "all") {
+    if (bench == "all") {
         //Launch all the graphs
         bench_all<
             TrivialSmall,
@@ -550,8 +567,54 @@ int main(){
             NonTrivialStringMovable,
             NonTrivialStringMovableNoExcept,
             NonTrivialArray<32> >();
-    } else {
+    } else if (bench.empty()) {
         bench_simpler<TrivialPointer>();
+    } else if (bench == bench_name<bench_fastest_addition>()) {
+        bench_types<bench_fastest_addition, TrivialPointer>();
+    } else if (bench == bench_name<bench_fill_back>()) {
+        bench_types<bench_fill_back, TrivialPointer>();
+    } else if (bench == bench_name<bench_emplace_back>()) {
+        bench_types<bench_emplace_back, TrivialPointer>();
+    } else if (bench == bench_name<bench_fill_front>()) {
+        bench_types<bench_fill_front, TrivialPointer>();
+    } else if (bench == bench_name<bench_emplace_front>()) {
+        bench_types<bench_emplace_front, TrivialPointer>();
+    } else if (bench == bench_name<bench_linear_search>()) {
+        bench_types<bench_linear_search, TrivialPointer>();
+    } else if (bench == bench_name<bench_random_insert>()) {
+        bench_types<bench_random_insert, TrivialPointer>();
+    } else if (bench == bench_name<bench_random_remove>()) {
+        bench_types<bench_random_remove, TrivialPointer>();
+    } else if (bench == bench_name<bench_erase_front>()) {
+        bench_types<bench_erase_front, TrivialPointer>();
+    } else if (bench == bench_name<bench_erase_middle>()) {
+        bench_types<bench_erase_middle, TrivialPointer>();
+    } else if (bench == bench_name<bench_erase_back>()) {
+        bench_types<bench_erase_back, TrivialPointer>();
+    } else if (bench == bench_name<bench_sort>()) {
+        bench_types<bench_sort, TrivialPointer>();
+    } else if (bench == bench_name<bench_destruction>()) {
+        bench_types<bench_destruction, TrivialPointer>();
+    } else if (bench == bench_name<bench_number_crunching>()) {
+        bench_types<bench_number_crunching, TrivialPointer>();
+    } else if (bench == bench_name<bench_erase_1>()) {
+        bench_types<bench_erase_1, TrivialPointer>();
+    } else if (bench == bench_name<bench_erase_10>()) {
+        bench_types<bench_erase_10, TrivialPointer>();
+    } else if (bench == bench_name<bench_erase_25>()) {
+        bench_types<bench_erase_25, TrivialPointer>();
+    } else if (bench == bench_name<bench_erase_50>()) {
+        bench_types<bench_erase_50, TrivialPointer>();
+    } else if (bench == bench_name<bench_full_erase>()) {
+        bench_types<bench_full_erase, TrivialPointer>();
+    } else if (bench == bench_name<bench_traversal>()) {
+        bench_types<bench_traversal, TrivialPointer>();
+    } else if (bench == bench_name<bench_write>()) {
+        bench_types<bench_write, TrivialPointer>();
+    } else if (bench == bench_name<bench_find>()) {
+        bench_types<bench_find, TrivialPointer>();
+    } else {
+        std::cerr << "Invalid BENCH variable" << std::endl;
     }
 
     //Generate the graphs

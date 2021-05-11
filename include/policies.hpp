@@ -443,6 +443,16 @@ struct Iterate {
 };
 
 template<class Container>
+struct IterateAndClear : Iterate<Container> {
+    inline static void run(Container &c, std::size_t size){
+        Iterate<Container>::run(c, size);
+        c.clear();
+    }
+};
+
+template<class Container> using IterateAndClearShrink = Shrink<Container, IterateAndClear>;
+
+template<class Container>
 struct Erase {
     inline static void run(Container &c, std::size_t){
         for(std::size_t i=0; i<1000; ++i) {
