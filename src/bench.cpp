@@ -160,9 +160,9 @@ static_assert(is_non_trivial_of_size<NonTrivialArrayMedium>(32), "Invalid type")
 
 template<typename T>
 struct bench_fastest_addition {
+    static const std::string name() { return "fastest_insertion"; }
     static void run(){
-        new_graph<T>("fastest_insertion", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = { 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 };
         bench<std::vector<T>, microseconds, Empty, FastestAddition>("vector", sizes);
         bench<std::list<T>,   microseconds, Empty, FastestAddition>("list",   sizes);
@@ -175,9 +175,9 @@ struct bench_fastest_addition {
 
 template<typename T>
 struct bench_fill_back {
+    static const std::string name() { return "fill_back"; }
     static void run(){
-        new_graph<T>("fill_back", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = { 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 };
         bench<std::vector<T>, microseconds, Empty, FillBack>("vector", sizes);
         bench<std::list<T>,   microseconds, Empty, FillBack>("list",   sizes);
@@ -190,9 +190,9 @@ struct bench_fill_back {
 
 template<typename T>
 struct bench_emplace_back {
+    static const std::string name() { return "emplace_back"; }
     static void run(){
-        new_graph<T>("emplace_back", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = { 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 };
         bench<std::vector<T>, microseconds, Empty, EmplaceBack>("vector", sizes);
         bench<std::list<T>,   microseconds, Empty, EmplaceBack>("list",   sizes);
@@ -204,9 +204,9 @@ struct bench_emplace_back {
 
 template<typename T>
 struct bench_fill_front {
+    static const std::string name() { return "fill_front"; }
     static void run(){
-        new_graph<T>("fill_front", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = { 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000 };
 
         // it is too slow with bigger data types
@@ -222,9 +222,9 @@ struct bench_fill_front {
 
 template<typename T>
 struct bench_emplace_front {
+    static const std::string name() { return "emplace_front"; }
     static void run(){
-        new_graph<T>("emplace_front", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = { 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000 };
 
         // it is too slow with bigger data types
@@ -240,9 +240,9 @@ struct bench_emplace_front {
 
 template<typename T>
 struct bench_linear_search {
+    static const std::string name() { return "linear_search"; }
     static void run(){
-        new_graph<T>("linear_search", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000};
         bench<std::vector<T>, microseconds, FilledRandom, Find>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Find>("list",   sizes);
@@ -253,9 +253,9 @@ struct bench_linear_search {
 
 template<typename T>
 struct bench_random_insert {
+    static const std::string name() { return "random_insert"; }
     static void run(){
-        new_graph<T>("random_insert", "ms");
-
+        new_graph<T>(name(), "ms");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, milliseconds, FilledRandom, Insert>("vector", sizes);
         bench<std::list<T>,   milliseconds, FilledRandom, Insert>("list",   sizes);
@@ -266,9 +266,9 @@ struct bench_random_insert {
 
 template<typename T>
 struct bench_random_remove {
+    static const std::string name() { return "random_remove"; }
     static void run(){
-        new_graph<T>("random_remove", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, Erase>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Erase>("list",   sizes);
@@ -290,9 +290,9 @@ struct bench_random_remove {
 
 template<typename T>
 struct bench_erase_front {
+    static const std::string name() { return "erase_front"; }
     static void run(){
-        new_graph<T>("erase_front", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, EraseFront>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, EraseFront>("list",   sizes);
@@ -306,9 +306,9 @@ struct bench_erase_front {
 
 template<typename T>
 struct bench_erase_middle {
+    static const std::string name() { return "erase_middle"; }
     static void run(){
-        new_graph<T>("erase_middle", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, EraseMiddle>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, EraseMiddle>("list",   sizes);
@@ -322,9 +322,9 @@ struct bench_erase_middle {
 
 template<typename T>
 struct bench_erase_back {
+    static const std::string name() { return "erase_back"; }
     static void run(){
-        new_graph<T>("erase_back", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, EraseBack>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, EraseBack>("list",   sizes);
@@ -338,9 +338,9 @@ struct bench_erase_back {
 
 template<typename T>
 struct bench_sort {
+    static const std::string name() { return "sort"; }
     static void run(){
-        new_graph<T>("sort", "ms");
-
+        new_graph<T>(name(), "ms");
         auto sizes = {100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000};
         bench<std::vector<T>, milliseconds, FilledRandom, Sort>("vector", sizes);
         bench<std::list<T>,   milliseconds, FilledRandom, Sort>("list",   sizes);
@@ -351,9 +351,9 @@ struct bench_sort {
 
 template<typename T>
 struct bench_destruction {
+    static const std::string name() { return "destruction"; }
     static void run(){
-        new_graph<T>("destruction", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000};
         bench<std::vector<T>, microseconds, SmartFilled, SmartDelete>("vector", sizes);
         bench<std::list<T>,   microseconds, SmartFilled, SmartDelete>("list",   sizes);
@@ -364,9 +364,9 @@ struct bench_destruction {
 
 template<typename T>
 struct bench_number_crunching {
+    static const std::string name() { return "number_crunching"; }
     static void run(){
-        new_graph<T>("number_crunching", "ms");
-
+        new_graph<T>(name(), "ms");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, milliseconds, Empty, RandomSortedInsert>("vector", sizes);
         bench<std::list<T>,   milliseconds, Empty, RandomSortedInsert>("list",   sizes);
@@ -377,9 +377,9 @@ struct bench_number_crunching {
 
 template<typename T>
 struct bench_erase_1 {
+    static const std::string name() { return "erase1"; }
     static void run(){
-        new_graph<T>("erase1", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase1>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase1>("list",   sizes);
@@ -393,9 +393,9 @@ struct bench_erase_1 {
 
 template<typename T>
 struct bench_erase_10 {
+    static const std::string name() { return "erase10"; }
     static void run(){
-        new_graph<T>("erase10", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase10>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase10>("list",   sizes);
@@ -409,9 +409,9 @@ struct bench_erase_10 {
 
 template<typename T>
 struct bench_erase_25 {
+    static const std::string name() { return "erase25"; }
     static void run(){
-        new_graph<T>("erase25", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase25>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase25>("list",   sizes);
@@ -422,9 +422,9 @@ struct bench_erase_25 {
 
 template<typename T>
 struct bench_erase_50 {
+    static const std::string name() { return "erase50"; }
     static void run(){
-        new_graph<T>("erase50", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, RandomErase50>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, RandomErase50>("list",   sizes);
@@ -435,9 +435,9 @@ struct bench_erase_50 {
 
 template<typename T>
 struct bench_full_erase {
+    static const std::string name() { return "erase_full"; }
     static void run(){
-        new_graph<T>("erase_full", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, FullErase>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, FullErase>("list",   sizes);
@@ -451,9 +451,9 @@ struct bench_full_erase {
 
 template<typename T>
 struct bench_traversal {
+    static const std::string name() { return "traversal"; }
     static void run(){
-        new_graph<T>("traversal", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, Iterate>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Iterate>("list",   sizes);
@@ -464,9 +464,9 @@ struct bench_traversal {
 
 template<typename T>
 struct bench_write {
+    static const std::string name() { return "write"; }
     static void run(){
-        new_graph<T>("write", "us");
-
+        new_graph<T>(name(), "us");
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, Write>("vector", sizes);
         bench<std::list<T>,   microseconds, FilledRandom, Write>("list",   sizes);
@@ -477,8 +477,9 @@ struct bench_write {
 
 template<typename T>
 struct bench_find {
+    static const std::string name() { return "find"; }
     static void run(){
-        new_graph<T>("find", "us");
+        new_graph<T>(name(), "us");
 
         auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
         bench<std::vector<T>, microseconds, FilledRandom, Find>("vector", sizes);

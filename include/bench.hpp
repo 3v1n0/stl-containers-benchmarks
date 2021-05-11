@@ -74,6 +74,11 @@ void bench_types(){
     bench_types<Benchmark, Types...>();
 }
 
+template<template<class> class Benchmark>
+std::string bench_name(){
+    return Benchmark<void>::name();
+}
+
 bool is_tag(int c){
     return std::isalnum(c) || c == '_';
 }
