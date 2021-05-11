@@ -24,8 +24,12 @@ jobs:
         run: env CXX=${{ matrix.compiler }} meson _build
       - name: Build
         run: ninja -C _build
-      - name: Run default benchmarks
+      - name: Run ${{ matrix.suite }} benchmarks
         run: meson test -C _build --benchmark -v -t2 --suite=${{ matrix.suite }}
+      - name: Rename results
+        run: |
+          result=$(ls _build/graph_*.html)
+          mv $result _build/$(basename "$result" .html)_${{ matrix.suite }}_${{ matrix.compiler }}.html
       - name: Save artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -35,7 +39,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: Benchmark ${{ matrix.suite }}
+          name: STL Container benchmarks ${{ env.GITHUB_REF }}
           files: _build/graph_*.html
           fail_on_unmatched_files: true
         env:
