@@ -20,6 +20,11 @@ struct Empty {
 };
 
 template<class Container>
+constexpr bool is_list() {
+    return std::is_same_v<Container, std::list<typename Container::value_type>>;
+}
+
+template<class Container>
 constexpr bool is_forward_list() {
     return std::is_same_v<Container, std::forward_list<typename Container::value_type>>;
 }
@@ -42,6 +47,14 @@ constexpr bool can_push_back() {
 template<class Container, typename T>
 constexpr void container_push_value(Container& container, T const& value) {
     if constexpr (!has_random_insert<Container>())
+        container.push_front({value});
+    else
+        container.push_back({value});
+}
+
+template<class Container, typename T>
+constexpr void container_push_value_fastest(Container& container, T const& value) {
+    if constexpr (is_forward_list<Container>() || is_list<Container>())
         container.push_front({value});
     else
         container.push_back({value});
@@ -119,6 +132,24 @@ struct FilledRandom {
 
 template<class Container>
 std::vector<typename Container::value_type> FilledRandom<Container>::v;
+
+template<class Container>
+struct FilledSequential {
+    static std::vector<typename Container::value_type> v;
+    inline static Container make(std::size_t size){
+        Container container;
+        for(std::size_t i = 0; i < size; ++i){
+            container_push_value(container, i);
+        }
+
+        return container;
+    }
+
+    inline static void clean(){
+        v.clear();
+        v.shrink_to_fit();
+    }
+};
 
 template<class Container>
 struct FilledRandomInsert {
@@ -250,6 +281,28 @@ struct FillBackBackup {
             for(size_t i=0; i<size; ++i){
                 container_push_value(c, EmptyPrepareBackup<Container>::v[i]);
             }
+        }
+    }
+};
+
+template<class Container>
+struct FastestAddition {
+    static const typename Container::value_type value;
+    inline static void run(Container &c, std::size_t size){
+        for(size_t i=0; i<size; ++i){
+            container_push_value_fastest(c, value);
+        }
+    }
+};
+
+template <class Container>
+const typename Container::value_type FastestAddition<Container>::value{};
+
+template<class Container>
+struct FastestAdditionBackup {
+    inline static void run(Container &c, std::size_t size){
+        for(size_t i=0; i<size; ++i){
+            container_push_value_fastest(c, EmptyPrepareBackup<Container>::v[i]);
         }
     }
 };

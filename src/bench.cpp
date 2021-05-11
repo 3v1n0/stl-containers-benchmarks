@@ -158,6 +158,21 @@ static_assert(is_non_trivial_of_size<NonTrivialArrayMedium>(32), "Invalid type")
 // Define all benchmarks
 
 template<typename T>
+struct bench_fastest_addition {
+    static void run(){
+        new_graph<T>("fastest_insertion", "us");
+
+        auto sizes = { 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 };
+        bench<std::vector<T>, microseconds, Empty, FastestAddition>("vector", sizes);
+        bench<std::list<T>,   microseconds, Empty, FastestAddition>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, Empty, FastestAddition>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, Empty, FastestAddition>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, Empty, ReserveSize, FastestAddition>("vector reserve", sizes);
+    }
+};
+
+template<typename T>
 struct bench_fill_back {
     static void run(){
         new_graph<T>("fill_back", "us");
@@ -402,6 +417,7 @@ template<typename ...Types>
 void bench_all(){
     bench_types<bench_fill_back,        Types...>();
     bench_types<bench_emplace_back,     Types...>();
+    bench_types<bench_fastest_addition, Types...>();
     bench_types<bench_fill_front,       Types...>();
     bench_types<bench_emplace_front,    Types...>();
     bench_types<bench_linear_search,    Types...>();
