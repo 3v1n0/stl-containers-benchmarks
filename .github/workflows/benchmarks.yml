@@ -1,0 +1,42 @@
+name: Run benchmarks
+on: [push]
+jobs:
+  benchmark:
+    strategy:
+      matrix:
+        suite: ['normal', 'slow']
+        compiler: ['g++', 'clang++']
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Install prerequisites
+        run: |
+          compiler="g++"
+          if [[ "${{ matrix.compiler }}" == "clang++" ]]; then
+            compiler="clang"
+          fi
+          sudo apt install -y python3-pip $compiler
+          sudo pip3 install meson ninja
+      - name: Configure
+        run: env CXX=${{ matrix.compiler }} meson _build
+      - name: Build
+        run: ninja -C _build
+      - name: Run default benchmarks
+        run: meson test -C _build --benchmark -v -t2 --suite=${{ matrix.suite }}
+      - name: Save artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Benchmark ${{ matrix.suite }} results
+          path: _build/graph_*.html
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: Benchmark ${{ matrix.suite }}
+          files: _build/graph_*.html
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
