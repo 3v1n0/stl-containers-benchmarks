@@ -144,6 +144,7 @@ class NonTrivialArray {
 
 // type definitions for testing and invariants check
 using TrivialSmall   = Trivial<8>;       static_assert(is_trivial_of_size<TrivialSmall>(8),        "Invalid type");
+using TrivialPointer = Trivial<sizeof(void*)>; static_assert(is_trivial_of_size<TrivialSmall>(sizeof(void*)), "Invalid type");
 using TrivialMedium  = Trivial<32>;      static_assert(is_trivial_of_size<TrivialMedium>(32),      "Invalid type");
 using TrivialLarge   = Trivial<128>;     static_assert(is_trivial_of_size<TrivialLarge>(128),      "Invalid type");
 using TrivialHuge    = Trivial<1024>;    static_assert(is_trivial_of_size<TrivialHuge>(1024),      "Invalid type");
@@ -516,17 +517,41 @@ void bench_all(){
     bench_types<bench_number_crunching, TrivialSmall, TrivialMedium>();
 }
 
+template<typename Type>
+void bench_simpler(){
+    bench_types<bench_fastest_addition, Type>();
+    bench_types<bench_fill_front,       Type>();
+    bench_types<bench_linear_search,    Type>();
+    bench_types<bench_write,            Type>();
+    bench_types<bench_random_remove,    Type>();
+    bench_types<bench_erase_front,      Type>();
+    bench_types<bench_erase_middle,     Type>();
+    bench_types<bench_erase_back,       Type>();
+    bench_types<bench_destruction,      Type>();
+    bench_types<bench_erase_1,          Type>();
+    bench_types<bench_erase_10,         Type>();
+    bench_types<bench_erase_25,         Type>();
+    bench_types<bench_erase_50,         Type>();
+    bench_types<bench_full_erase,       Type>();
+}
+
 int main(){
-    //Launch all the graphs
-    bench_all<
-        TrivialSmall,
-        TrivialMedium,
-        TrivialLarge,
-        TrivialHuge,
-        TrivialMonster,
-        NonTrivialStringMovable,
-        NonTrivialStringMovableNoExcept,
-        NonTrivialArray<32> >();
+    const char *bench = getenv("BENCH");
+
+    if (bench && std::string(bench) == "all") {
+        //Launch all the graphs
+        bench_all<
+            TrivialSmall,
+            TrivialMedium,
+            TrivialLarge,
+            TrivialHuge,
+            TrivialMonster,
+            NonTrivialStringMovable,
+            NonTrivialStringMovableNoExcept,
+            NonTrivialArray<32> >();
+    } else {
+        bench_simpler<TrivialPointer>();
+    }
 
     //Generate the graphs
     graphs::output(graphs::Output::GOOGLE);
