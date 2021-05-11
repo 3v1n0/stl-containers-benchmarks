@@ -63,20 +63,27 @@ void bench(const std::string& type, const std::initializer_list<int> &sizes){
     CreatePolicy<Container>::clean();
 }
 
-template<template<class> class Benchmark>
-void bench_types(){
-    //Recursion end
-}
-
-template<template<class> class Benchmark, typename T, typename ...Types>
-void bench_types(){
-    Benchmark<T>::run();
-    bench_types<Benchmark, Types...>();
+namespace BenchRun {
+static size_t tests = 0;
 }
 
 template<template<class> class Benchmark>
 std::string bench_name(){
     return Benchmark<void>::name();
+}
+
+template<template<class> class Benchmark>
+void bench_types(std::set<std::string> const&){
+    //Recursion end
+}
+
+template<template<class> class Benchmark, typename T, typename ...Types>
+void bench_types(std::set<std::string> const& enabled){
+    if (enabled.empty() || enabled.count(bench_name<Benchmark>())) {
+        BenchRun::tests += 1;
+        Benchmark<T>::run();
+        bench_types<Benchmark, Types...>(enabled);
+    }
 }
 
 bool is_tag(int c){

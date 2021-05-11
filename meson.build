@@ -21,13 +21,14 @@ bench = executable('bench',
 benchmark('bench', bench,
     timeout: 600,
     suite: ['normal'],
+    env: ['BENCH_TYPES=TrivialPointer'],
 )
 
 slow_timeout = meson.version().version_compare('>= 0.57.0') ? -1 : 18000
 
-benchmark('bench-all', bench,
+benchmark('bench-full', bench,
     timeout: slow_timeout,
-    env: ['BENCH=all'],
+    env: ['BENCH_TYPES=full'],
     suite: ['slow'],
 )
 
@@ -60,7 +61,10 @@ single_benchmarks = [
 foreach b: single_benchmarks
     benchmark(b, bench,
     timeout: slow_timeout,
-    env: ['BENCH='+b],
+    env: [
+        'BENCH_NAMES='+b,
+        'BENCH_TYPES=TrivialPointer'
+    ],
     suite: ['single'],
 )
 endforeach

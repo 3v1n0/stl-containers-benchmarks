@@ -18,6 +18,7 @@
 #include <typeinfo>
 #include <memory>
 #include <set>
+#include <sstream>
 #include <unordered_set>
 
 #include "bench.hpp"
@@ -508,59 +509,60 @@ struct bench_find {
 //Launch the benchmark
 
 template<typename ...Types>
-void bench_all(){
-    bench_types<bench_fill_back,        Types...>();
-    bench_types<bench_emplace_back,     Types...>();
-    bench_types<bench_fastest_addition, Types...>();
-    bench_types<bench_fill_front,       Types...>();
-    bench_types<bench_emplace_front,    Types...>();
-    bench_types<bench_linear_search,    Types...>();
-    bench_types<bench_write,            Types...>();
-    bench_types<bench_random_insert,    Types...>();
-    bench_types<bench_random_remove,    Types...>();
-    bench_types<bench_traversal,        Types...>();
-    bench_types<bench_traversal_and_clear, Types...>();
-    bench_types<bench_sort,             Types...>();
-    bench_types<bench_erase_front,      Types...>();
-    bench_types<bench_erase_middle,     Types...>();
-    bench_types<bench_erase_back,       Types...>();
-    bench_types<bench_destruction,      Types...>();
-    bench_types<bench_erase_1,          Types...>();
-    bench_types<bench_erase_10,         Types...>();
-    bench_types<bench_erase_25,         Types...>();
-    bench_types<bench_erase_50,         Types...>();
-    bench_types<bench_full_erase,       Types...>();
-
-    // The following are really slow so run only for limited set of data
-    bench_types<bench_find,             TrivialSmall, TrivialMedium, TrivialLarge>();
-    bench_types<bench_number_crunching, TrivialSmall, TrivialMedium>();
+void bench_fast(std::set<std::string> const& enabled){
+    bench_types<bench_fastest_addition,       Types...>(enabled);
+    bench_types<bench_fill_front,             Types...>(enabled);
+    bench_types<bench_fill_back,              Types...>(enabled);
+    bench_types<bench_emplace_back,           Types...>(enabled);
+    bench_types<bench_emplace_front,          Types...>(enabled);
+    bench_types<bench_linear_search,          Types...>(enabled);
+    bench_types<bench_traversal,              Types...>(enabled);
+    bench_types<bench_traversal_and_clear,    Types...>(enabled);
+    bench_types<bench_write,                  Types...>(enabled);
+    bench_types<bench_random_insert,          Types...>(enabled);
+    bench_types<bench_random_remove,          Types...>(enabled);
+    bench_types<bench_erase_front,            Types...>(enabled);
+    bench_types<bench_erase_middle,           Types...>(enabled);
+    bench_types<bench_erase_back,             Types...>(enabled);
+    bench_types<bench_destruction,            Types...>(enabled);
+    bench_types<bench_erase_1,                Types...>(enabled);
+    bench_types<bench_erase_10,               Types...>(enabled);
+    bench_types<bench_erase_25,               Types...>(enabled);
+    bench_types<bench_erase_50,               Types...>(enabled);
+    bench_types<bench_full_erase,             Types...>(enabled);
 }
 
-template<typename Type>
-void bench_simpler(){
-    bench_types<bench_fastest_addition, Type>();
-    bench_types<bench_fill_front,       Type>();
-    bench_types<bench_linear_search,    Type>();
-    bench_types<bench_traversal,        Type>();
-    bench_types<bench_traversal_and_clear, Type>();
-    bench_types<bench_write,            Type>();
-    bench_types<bench_random_remove,    Type>();
-    bench_types<bench_erase_front,      Type>();
-    bench_types<bench_erase_middle,     Type>();
-    bench_types<bench_erase_back,       Type>();
-    bench_types<bench_destruction,      Type>();
-    bench_types<bench_erase_1,          Type>();
-    bench_types<bench_erase_10,         Type>();
-    bench_types<bench_erase_25,         Type>();
-    bench_types<bench_erase_50,         Type>();
-    bench_types<bench_full_erase,       Type>();
+template<typename ...Types>
+void bench_all(std::set<std::string> const& enabled){
+    bench_fast<Types...>(enabled);
+
+    bench_types<bench_sort,             Types...>(enabled);
+
+    // The following are really slow so run only for limited set of data
+    bench_types<bench_find,             TrivialSmall, TrivialMedium, TrivialLarge>(enabled);
+    bench_types<bench_number_crunching, TrivialSmall, TrivialMedium>(enabled);
+}
+
+static std::set<std::string> env_options(std::string const &env) {
+    const char *bench_env = getenv(env.c_str());
+    std::stringstream bench_names(bench_env ? bench_env : "");
+
+    std::set<std::string> options;
+    std::string segment;
+    while(std::getline(bench_names, segment, ':'))
+        options.insert(segment);
+
+    if (options.empty() && !bench_names.str().empty())
+        options.insert(bench_names.str());
+
+    return options;
 }
 
 int main(){
-    const char *bench_env = getenv("BENCH");
-    std::string bench(bench_env ? bench_env : "");
+    auto enabled = env_options("BENCH_NAMES");
+    auto bench_types = env_options("BENCH_TYPES");
 
-    if (bench == "all") {
+    if (bench_types.size() == 1 && bench_types.count("full")) {
         //Launch all the graphs
         bench_all<
             TrivialSmall,
@@ -570,57 +572,31 @@ int main(){
             TrivialMonster,
             NonTrivialStringMovable,
             NonTrivialStringMovableNoExcept,
-            NonTrivialArray<32> >();
-    } else if (bench.empty()) {
-        bench_simpler<TrivialPointer>();
-    } else if (bench == bench_name<bench_fastest_addition>()) {
-        bench_types<bench_fastest_addition, TrivialPointer>();
-    } else if (bench == bench_name<bench_fill_back>()) {
-        bench_types<bench_fill_back, TrivialPointer>();
-    } else if (bench == bench_name<bench_emplace_back>()) {
-        bench_types<bench_emplace_back, TrivialPointer>();
-    } else if (bench == bench_name<bench_fill_front>()) {
-        bench_types<bench_fill_front, TrivialPointer>();
-    } else if (bench == bench_name<bench_emplace_front>()) {
-        bench_types<bench_emplace_front, TrivialPointer>();
-    } else if (bench == bench_name<bench_linear_search>()) {
-        bench_types<bench_linear_search, TrivialPointer>();
-    } else if (bench == bench_name<bench_random_insert>()) {
-        bench_types<bench_random_insert, TrivialPointer>();
-    } else if (bench == bench_name<bench_random_remove>()) {
-        bench_types<bench_random_remove, TrivialPointer>();
-    } else if (bench == bench_name<bench_erase_front>()) {
-        bench_types<bench_erase_front, TrivialPointer>();
-    } else if (bench == bench_name<bench_erase_middle>()) {
-        bench_types<bench_erase_middle, TrivialPointer>();
-    } else if (bench == bench_name<bench_erase_back>()) {
-        bench_types<bench_erase_back, TrivialPointer>();
-    } else if (bench == bench_name<bench_sort>()) {
-        bench_types<bench_sort, TrivialPointer>();
-    } else if (bench == bench_name<bench_destruction>()) {
-        bench_types<bench_destruction, TrivialPointer>();
-    } else if (bench == bench_name<bench_number_crunching>()) {
-        bench_types<bench_number_crunching, TrivialPointer>();
-    } else if (bench == bench_name<bench_erase_1>()) {
-        bench_types<bench_erase_1, TrivialPointer>();
-    } else if (bench == bench_name<bench_erase_10>()) {
-        bench_types<bench_erase_10, TrivialPointer>();
-    } else if (bench == bench_name<bench_erase_25>()) {
-        bench_types<bench_erase_25, TrivialPointer>();
-    } else if (bench == bench_name<bench_erase_50>()) {
-        bench_types<bench_erase_50, TrivialPointer>();
-    } else if (bench == bench_name<bench_full_erase>()) {
-        bench_types<bench_full_erase, TrivialPointer>();
-    } else if (bench == bench_name<bench_traversal>()) {
-        bench_types<bench_traversal, TrivialPointer>();
-    } else if (bench == bench_name<bench_traversal_and_clear>()) {
-        bench_types<bench_traversal_and_clear, TrivialPointer>();
-    } else if (bench == bench_name<bench_write>()) {
-        bench_types<bench_write, TrivialPointer>();
-    } else if (bench == bench_name<bench_find>()) {
-        bench_types<bench_find, TrivialPointer>();
+            NonTrivialArray<32> >(enabled);
     } else {
-        std::cerr << "Invalid BENCH variable" << std::endl;
+        if (bench_types.empty() || bench_types.count("TrivialPointer"))
+            bench_fast<TrivialPointer>(enabled);
+        if (bench_types.empty() || bench_types.count("TrivialSmall"))
+            bench_fast<TrivialSmall>(enabled);
+        if (bench_types.empty() || bench_types.count("TrivialMedium"))
+            bench_fast<TrivialMedium>(enabled);
+        if (bench_types.empty() || bench_types.count("TrivialLarge"))
+            bench_fast<TrivialLarge>(enabled);
+        if (bench_types.empty() || bench_types.count("TrivialHuge"))
+            bench_fast<TrivialHuge>(enabled);
+        if (bench_types.empty() || bench_types.count("TrivialMonster"))
+            bench_fast<TrivialMonster>(enabled);
+        if (bench_types.empty() || bench_types.count("NonTrivialStringMovable"))
+            bench_fast<NonTrivialStringMovable>(enabled);
+        if (bench_types.empty() || bench_types.count("NonTrivialStringMovableNoExcept"))
+            bench_fast<NonTrivialStringMovableNoExcept>(enabled);
+        if (bench_types.empty() || bench_types.count("NonTrivialArray"))
+            bench_fast<NonTrivialArray<32>>(enabled);
+    }
+
+    if (!BenchRun::tests) {
+        std::cerr << "No benchmark ran" << std::endl;
+        return 77;
     }
 
     //Generate the graphs
