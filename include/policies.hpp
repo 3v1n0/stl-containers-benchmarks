@@ -458,6 +458,59 @@ struct RemoveErase {
     }
 };
 
+template<class Container>
+struct EraseFront {
+    inline static void run(Container &c, std::size_t){
+        decltype(c.begin()) it;
+        if constexpr (is_forward_list<Container>())
+            it = c.before_begin();
+        else
+            it = c.begin();
+
+        if constexpr (is_forward_list<Container>())
+            c.erase_after(it);
+        else
+            c.erase(it);
+    }
+};
+
+template<class Container>
+struct EraseMiddle {
+    inline static void run(Container &c, std::size_t size){
+        decltype(c.begin()) it;
+        if constexpr (is_forward_list<Container>())
+            it = c.before_begin();
+        else
+            it = c.begin();
+
+        std::advance(it, size/2);
+
+        if constexpr (is_forward_list<Container>())
+            c.erase_after(it);
+        else
+            c.erase(it);
+    }
+};
+
+template<class Container>
+struct EraseBack {
+    inline static void run(Container &c, std::size_t){
+        decltype(c.begin()) it;
+        if constexpr (is_forward_list<Container>()) {
+            auto it_before = c.before_begin();
+            auto it_next = c.begin();
+            for (++it_next; it_next != c.end(); ++it_next) {
+                it_before++;
+            }
+
+            c.erase_after(it_before);
+        }
+        else {
+            c.pop_back();
+        }
+    }
+};
+
 //Sort the container
 
 template<class Container>
@@ -641,6 +694,24 @@ struct RandomErase50 {
 
 template<class Container> std::mt19937 RandomErase50<Container>::generator;
 template<class Container> std::uniform_int_distribution<std::size_t> RandomErase50<Container>::distribution(0, 10000);
+
+template<class Container>
+struct FullErase {
+    inline static void run(Container &c, std::size_t /*size*/){
+        auto it = c.begin();
+        decltype(c.begin()) before;
+
+        if constexpr (!has_random_insert<Container>())
+            before = c.before_begin();
+
+        while(it != c.end()){
+            if constexpr (!has_random_insert<Container>())
+                it = c.erase_after(before);
+            else
+                it = c.erase(it);
+        }
+    }
+};
 
 // Note: This is probably erased completely for a vector
 template<class Container>

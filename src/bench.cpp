@@ -282,6 +282,45 @@ struct bench_random_remove {
 };
 
 template<typename T>
+struct bench_erase_front {
+    static void run(){
+        new_graph<T>("erase_front", "us");
+
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledRandom, EraseFront>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledRandom, EraseFront>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, EraseFront>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, EraseFront>("deque",  sizes);
+    }
+};
+
+template<typename T>
+struct bench_erase_middle {
+    static void run(){
+        new_graph<T>("erase_middle", "us");
+
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledRandom, EraseMiddle>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledRandom, EraseMiddle>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, EraseMiddle>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, EraseMiddle>("deque",  sizes);
+    }
+};
+
+template<typename T>
+struct bench_erase_back {
+    static void run(){
+        new_graph<T>("erase_back", "us");
+
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledRandom, EraseBack>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledRandom, EraseBack>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, EraseBack>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, EraseBack>("deque",  sizes);
+    }
+};
+
+template<typename T>
 struct bench_sort {
     static void run(){
         new_graph<T>("sort", "ms");
@@ -373,6 +412,19 @@ struct bench_erase_50 {
 };
 
 template<typename T>
+struct bench_full_erase {
+    static void run(){
+        new_graph<T>("erase_full", "us");
+
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledRandom, FullErase>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledRandom, FullErase>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledRandom, FullErase>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, FullErase>("deque",  sizes);
+    }
+};
+
+template<typename T>
 struct bench_traversal {
     static void run(){
         new_graph<T>("traversal", "us");
@@ -425,11 +477,15 @@ void bench_all(){
     bench_types<bench_random_insert,    Types...>();
     bench_types<bench_random_remove,    Types...>();
     bench_types<bench_sort,             Types...>();
+    bench_types<bench_erase_front,      Types...>();
+    bench_types<bench_erase_middle,     Types...>();
+    bench_types<bench_erase_back,       Types...>();
     bench_types<bench_destruction,      Types...>();
     bench_types<bench_erase_1,          Types...>();
     bench_types<bench_erase_10,         Types...>();
     bench_types<bench_erase_25,         Types...>();
     bench_types<bench_erase_50,         Types...>();
+    bench_types<bench_full_erase,       Types...>();
 
     // The following are really slow so run only for limited set of data
     bench_types<bench_find,             TrivialSmall, TrivialMedium, TrivialLarge>();
