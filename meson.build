@@ -52,6 +52,7 @@ single_benchmarks = [
     'random_remove',
     'sort',
     'traversal',
+    'traversal_and_clear',
     'write',
     'find',
 ]

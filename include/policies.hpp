@@ -437,6 +437,8 @@ struct Iterate {
         auto end = std::end(c);
 
         while(it != end){
+            auto val = *it;
+            (void)val;
             ++it;
         }
     }

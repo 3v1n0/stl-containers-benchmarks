@@ -518,6 +518,8 @@ void bench_all(){
     bench_types<bench_write,            Types...>();
     bench_types<bench_random_insert,    Types...>();
     bench_types<bench_random_remove,    Types...>();
+    bench_types<bench_traversal,        Types...>();
+    bench_types<bench_traversal_and_clear, Types...>();
     bench_types<bench_sort,             Types...>();
     bench_types<bench_erase_front,      Types...>();
     bench_types<bench_erase_middle,     Types...>();
@@ -539,6 +541,8 @@ void bench_simpler(){
     bench_types<bench_fastest_addition, Type>();
     bench_types<bench_fill_front,       Type>();
     bench_types<bench_linear_search,    Type>();
+    bench_types<bench_traversal,        Type>();
+    bench_types<bench_traversal_and_clear, Type>();
     bench_types<bench_write,            Type>();
     bench_types<bench_random_remove,    Type>();
     bench_types<bench_erase_front,      Type>();
@@ -609,6 +613,8 @@ int main(){
         bench_types<bench_full_erase, TrivialPointer>();
     } else if (bench == bench_name<bench_traversal>()) {
         bench_types<bench_traversal, TrivialPointer>();
+    } else if (bench == bench_name<bench_traversal_and_clear>()) {
+        bench_types<bench_traversal_and_clear, TrivialPointer>();
     } else if (bench == bench_name<bench_write>()) {
         bench_types<bench_write, TrivialPointer>();
     } else if (bench == bench_name<bench_find>()) {
