@@ -501,6 +501,24 @@ struct EraseFront {
 template<class Container> using EraseFrontShrink = Shrink<Container, EraseFront>;
 
 template<class Container>
+struct SwapAndErase {
+    template<typename T>
+    inline static void run(Container &c, T it) {
+        std::swap(*it, c.back());
+        c.pop_back();
+    }
+};
+
+template<class Container>
+struct EraseFrontSwap : SwapAndErase<Container> {
+    inline static void run(Container &c, std::size_t) {
+        SwapAndErase<Container>::run(c, c.begin());
+    }
+};
+
+template<class Container> using EraseFrontSwapShrink = Shrink<Container, EraseFrontSwap>;
+
+template<class Container>
 struct EraseMiddle {
     inline static void run(Container &c, std::size_t size){
         decltype(c.begin()) it;
@@ -519,6 +537,17 @@ struct EraseMiddle {
 };
 
 template<class Container> using EraseMiddleShrink = Shrink<Container, EraseMiddle>;
+
+template<class Container>
+struct EraseMiddleSwap : SwapAndErase<Container> {
+    inline static void run(Container &c, std::size_t size){
+        auto it = c.begin();
+        std::advance(it, size/2);
+        SwapAndErase<Container>::run(c, it);
+    }
+};
+
+template<class Container> using EraseMiddleSwapShrink = Shrink<Container, EraseMiddleSwap>;
 
 template<class Container>
 struct EraseBack {
@@ -540,6 +569,15 @@ struct EraseBack {
 };
 
 template<class Container> using EraseBackShrink = Shrink<Container, EraseBack>;
+
+template<class Container>
+struct EraseBackSwap : SwapAndErase<Container> {
+    inline static void run(Container &c, std::size_t){
+        SwapAndErase<Container>::run(c, c.rbegin());
+    }
+};
+
+template<class Container> using EraseBackSwapShrink = Shrink<Container, EraseBackSwap>;
 
 //Sort the container
 
