@@ -615,12 +615,12 @@ struct RandomErase1 {
         auto it = c.begin();
         decltype(c.begin()) before;
 
-        if constexpr (!has_random_insert<Container>())
+        if constexpr (is_forward_list<Container>())
             before = c.before_begin();
 
         while(it != c.end()){
             if(distribution(generator) > 9900){
-                if constexpr (!has_random_insert<Container>())
+                if constexpr (is_forward_list<Container>())
                     it = c.erase_after(before);
                 else
                     it = c.erase(it);
@@ -648,12 +648,12 @@ struct RandomErase10 {
         auto it = c.begin();
         decltype(c.begin()) before;
 
-        if constexpr (!has_random_insert<Container>())
+        if constexpr (is_forward_list<Container>())
             before = c.before_begin();
 
         while(it != c.end()){
             if(distribution(generator) > 9000){
-                if constexpr (!has_random_insert<Container>())
+                if constexpr (is_forward_list<Container>())
                     it = c.erase_after(before);
                 else
                     it = c.erase(it);
@@ -678,12 +678,12 @@ struct RandomErase25 {
         auto it = c.begin();
         decltype(c.begin()) before;
 
-        if constexpr (!has_random_insert<Container>())
+        if constexpr (is_forward_list<Container>())
             before = c.before_begin();
 
         while(it != c.end()){
             if(distribution(generator) > 7500){
-                if constexpr (!has_random_insert<Container>())
+                if constexpr (is_forward_list<Container>())
                     it = c.erase_after(before);
                 else
                     it = c.erase(it);
@@ -707,12 +707,12 @@ struct RandomErase50 {
         auto it = c.begin();
         decltype(c.begin()) before;
 
-        if constexpr (!has_random_insert<Container>())
+        if constexpr (is_forward_list<Container>())
             before = c.before_begin();
 
         while(it != c.end()){
             if(distribution(generator) > 5000){
-                if constexpr (!has_random_insert<Container>())
+                if constexpr (is_forward_list<Container>())
                     it = c.erase_after(before);
                 else
                     it = c.erase(it);
@@ -733,11 +733,11 @@ struct FullErase {
         auto it = c.begin();
         decltype(c.begin()) before;
 
-        if constexpr (!has_random_insert<Container>())
+        if constexpr (is_forward_list<Container>())
             before = c.before_begin();
 
         while(it != c.end()){
-            if constexpr (!has_random_insert<Container>())
+            if constexpr (is_forward_list<Container>())
                 it = c.erase_after(before);
             else
                 it = c.erase(it);
