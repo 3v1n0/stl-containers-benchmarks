@@ -166,7 +166,7 @@ struct bench_fill_back {
         bench<std::list<T>,   microseconds, Empty, FillBack>("list",   sizes);
         bench<std::deque<T>,  microseconds, Empty, FillBack>("deque",  sizes);
 
-        bench<std::vector<T>, microseconds, Empty, ReserveSize, FillBack>("vector_reserve", sizes);
+        bench<std::vector<T>, microseconds, Empty, ReserveSize, FillBack>("vector reserve", sizes);
     }
 };
 
@@ -179,7 +179,7 @@ struct bench_emplace_back {
         bench<std::vector<T>, microseconds, Empty, EmplaceBack>("vector", sizes);
         bench<std::list<T>,   microseconds, Empty, EmplaceBack>("list",   sizes);
         bench<std::deque<T>,  microseconds, Empty, EmplaceBack>("deque",  sizes);
-        bench<std::vector<T>, microseconds, Empty, ReserveSize, EmplaceBack>("vector_reserve", sizes);
+        bench<std::vector<T>, microseconds, Empty, ReserveSize, EmplaceBack>("vector reserve", sizes);
     }
 };
 
@@ -251,9 +251,9 @@ struct bench_random_remove {
         bench<std::list<T>,   microseconds, FilledRandom, Erase>("list",   sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, Erase>("deque",  sizes);
 
-        bench<std::vector<T>, microseconds, FilledRandom, RemoveErase>("vector_rem", sizes);
-        bench<std::list<T>,   microseconds, FilledRandom, RemoveErase>("list_rem",   sizes);
-        bench<std::deque<T>,  microseconds, FilledRandom, RemoveErase>("deque_rem",  sizes);
+        bench<std::vector<T>, microseconds, FilledRandom, RemoveErase>("vector rem", sizes);
+        bench<std::list<T>,   microseconds, FilledRandom, RemoveErase>("list rem",   sizes);
+        bench<std::deque<T>,  microseconds, FilledRandom, RemoveErase>("deque rem",  sizes);
     }
 };
 
