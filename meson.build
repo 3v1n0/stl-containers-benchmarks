@@ -1,5 +1,5 @@
 project('stl-containers-benchmarks', 'cpp',
-    version: '0.2',
+    version: '0.3',
     license: 'MIT',
     meson_version: '>= 0.52.0',
     default_options: [
