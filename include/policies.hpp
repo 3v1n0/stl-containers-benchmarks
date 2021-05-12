@@ -146,8 +146,13 @@ struct FilledSequential {
     static std::vector<typename Container::value_type> v;
     inline static Container make(std::size_t size){
         Container container;
-        for(std::size_t i = 0; i < size; ++i){
-            container_push_value(container, i);
+
+        if constexpr (is_forward_list<Container>()) {
+            for (std::size_t i = size; i; --i)
+                container.push_front({i-1});
+        } else {
+            for (std::size_t i = 0; i < size; ++i)
+                container.push_back({i});
         }
 
         return container;
@@ -158,6 +163,9 @@ struct FilledSequential {
         v.shrink_to_fit();
     }
 };
+
+template<class Container>
+std::vector<typename Container::value_type> FilledSequential<Container>::v;
 
 template<class Container>
 struct FilledRandomInsert {
@@ -519,6 +527,47 @@ struct EraseFrontSwap : SwapAndErase<Container> {
 template<class Container> using EraseFrontSwapShrink = Shrink<Container, EraseFrontSwap>;
 
 template<class Container>
+inline static auto find_value(Container &c, std::size_t value){
+    return std::find_if(begin(c), end(c), [&](decltype(*begin(c)) v){ return v.a == value; });
+}
+
+template<class Container>
+struct EraseValue {
+    inline static void run(Container &c, std::size_t value){
+        if constexpr (!has_random_insert<Container>()) {
+            auto before = c.before_begin();
+            std::find_if(begin(c), end(c), [&](decltype(*begin(c)) v){
+                if (v.a == value)
+                    return true;
+                before++;
+                return false;
+            });
+            c.erase_after(before);
+        } else {
+            c.erase(find_value<Container>(c, value));
+        }
+    }
+};
+
+template<class Container>
+struct EraseFrontValue : EraseValue<Container> {
+    inline static void run(Container &c, std::size_t){
+        EraseValue<Container>::run(c, c.front().a);
+    }
+};
+
+template<class Container> using EraseFrontValueShrink = Shrink<Container, EraseFrontValue>;
+
+template<class Container>
+struct EraseFrontValueSwap : EraseValue<Container>, SwapAndErase<Container> {
+    inline static void run(Container &c, std::size_t){
+        SwapAndErase<Container>::run(c, find_value<Container>(c, c.front().a));
+    }
+};
+
+template<class Container> using EraseFrontValueSwapShrink = Shrink<Container, EraseFrontValueSwap>;
+
+template<class Container>
 struct EraseMiddle {
     inline static void run(Container &c, std::size_t size){
         decltype(c.begin()) it;
@@ -550,6 +599,24 @@ struct EraseMiddleSwap : SwapAndErase<Container> {
 template<class Container> using EraseMiddleSwapShrink = Shrink<Container, EraseMiddleSwap>;
 
 template<class Container>
+struct EraseMiddleValue : EraseValue<Container> {
+    inline static void run(Container &c, std::size_t size){
+        EraseValue<Container>::run(c, size/2);
+    }
+};
+
+template<class Container> using EraseMiddleValueShrink = Shrink<Container, EraseMiddleValue>;
+
+template<class Container>
+struct EraseMiddleValueSwap : EraseValue<Container>, SwapAndErase<Container> {
+    inline static void run(Container &c, std::size_t size) {
+        SwapAndErase<Container>::run(c, find_value<Container>(c, size/2));
+    }
+};
+
+template<class Container> using EraseMiddleValueSwapShrink = Shrink<Container, EraseMiddleValueSwap>;
+
+template<class Container>
 struct EraseBack {
     inline static void run(Container &c, std::size_t){
         decltype(c.begin()) it;
@@ -578,6 +645,24 @@ struct EraseBackSwap : SwapAndErase<Container> {
 };
 
 template<class Container> using EraseBackSwapShrink = Shrink<Container, EraseBackSwap>;
+
+template<class Container>
+struct EraseBackValue : EraseValue<Container> {
+    inline static void run(Container &c, std::size_t size){
+        EraseValue<Container>::run(c, size-1);
+    }
+};
+
+template<class Container> using EraseBackValueShrink = Shrink<Container, EraseBackValue>;
+
+template<class Container>
+struct EraseBackValueSwap : EraseValue<Container>, SwapAndErase<Container> {
+    inline static void run(Container &c, std::size_t) {
+        SwapAndErase<Container>::run(c, find_value<Container>(c, c.back().a));
+    }
+};
+
+template<class Container> using EraseBackValueSwapShrink = Shrink<Container, EraseBackValueSwap>;
 
 //Sort the container
 

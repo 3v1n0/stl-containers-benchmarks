@@ -321,6 +321,37 @@ struct bench_erase_front_swap {
 };
 
 template<typename T>
+struct bench_erase_front_value {
+    static const std::string name() { return "erase_front_value"; }
+    static void run(){
+        new_graph<T>(name(), "us");
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledSequential, EraseFrontValue>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledSequential, EraseFrontValue>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledSequential, EraseFrontValue>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseFrontValue>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledSequential, EraseFrontValueShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseFrontValueShrink>("deque shrink",  sizes);
+    }
+};
+
+template<typename T>
+struct bench_erase_front_value_swap {
+    static const std::string name() { return "erase_front_value_swap"; }
+    static void run(){
+        new_graph<T>(name(), "us");
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledSequential, EraseFrontValueSwap>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledSequential, EraseFrontValueSwap>("list",   sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseFrontValueSwap>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledSequential, EraseFrontValueSwapShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseFrontValueSwapShrink>("deque shrink",  sizes);
+    }
+};
+
+template<typename T>
 struct bench_erase_middle {
     static const std::string name() { return "erase_middle"; }
     static void run(){
@@ -352,6 +383,37 @@ struct bench_erase_middle_swap {
 };
 
 template<typename T>
+struct bench_erase_middle_value {
+    static const std::string name() { return "erase_middle_value"; }
+    static void run(){
+        new_graph<T>(name(), "us");
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledSequential, EraseMiddleValue>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledSequential, EraseMiddleValue>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledSequential, EraseMiddleValue>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseMiddleValue>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledSequential, EraseMiddleValueShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseMiddleValueShrink>("deque shrink",  sizes);
+    }
+};
+
+template<typename T>
+struct bench_erase_middle_value_swap {
+    static const std::string name() { return "erase_middle_value_swap"; }
+    static void run(){
+        new_graph<T>(name(), "us");
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledSequential, EraseMiddleValueSwap>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledSequential, EraseMiddleValueSwap>("list",   sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseMiddleValueSwap>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledSequential, EraseMiddleValueSwapShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseMiddleValueSwapShrink>("deque shrink",  sizes);
+    }
+};
+
+template<typename T>
 struct bench_erase_back {
     static const std::string name() { return "erase_back"; }
     static void run(){
@@ -379,6 +441,37 @@ struct bench_erase_back_swap {
 
         bench<std::vector<T>, microseconds, FilledRandom, EraseBackSwapShrink>("vector shrink", sizes);
         bench<std::deque<T>,  microseconds, FilledRandom, EraseBackSwapShrink>("deque shrink",  sizes);
+    }
+};
+
+template<typename T>
+struct bench_erase_back_value {
+    static const std::string name() { return "erase_back_value"; }
+    static void run(){
+        new_graph<T>(name(), "us");
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledSequential, EraseBackValue>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledSequential, EraseBackValue>("list",   sizes);
+        bench<std::forward_list<T>, microseconds, FilledSequential, EraseBackValue>("forward_list", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseBackValue>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledSequential, EraseBackValueShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseBackValueShrink>("deque shrink",  sizes);
+    }
+};
+
+template<typename T>
+struct bench_erase_back_value_swap {
+    static const std::string name() { return "erase_back_value_swap"; }
+    static void run(){
+        new_graph<T>(name(), "us");
+        auto sizes = {10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
+        bench<std::vector<T>, microseconds, FilledSequential, EraseBackValueSwap>("vector", sizes);
+        bench<std::list<T>,   microseconds, FilledSequential, EraseBackValueSwap>("list",   sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseBackValueSwap>("deque",  sizes);
+
+        bench<std::vector<T>, microseconds, FilledSequential, EraseBackValueSwapShrink>("vector shrink", sizes);
+        bench<std::deque<T>,  microseconds, FilledSequential, EraseBackValueSwapShrink>("deque shrink",  sizes);
     }
 };
 
@@ -568,10 +661,16 @@ void bench_fast(std::set<std::string> const& enabled){
     bench_types<bench_random_remove,          Types...>(enabled);
     bench_types<bench_erase_front,            Types...>(enabled);
     bench_types<bench_erase_front_swap,       Types...>(enabled);
+    bench_types<bench_erase_front_value,      Types...>(enabled);
+    bench_types<bench_erase_front_value_swap, Types...>(enabled);
     bench_types<bench_erase_middle,           Types...>(enabled);
     bench_types<bench_erase_middle_swap,      Types...>(enabled);
+    bench_types<bench_erase_middle_value,     Types...>(enabled);
+    bench_types<bench_erase_middle_value_swap,Types...>(enabled);
     bench_types<bench_erase_back,             Types...>(enabled);
     bench_types<bench_erase_back_swap,        Types...>(enabled);
+    bench_types<bench_erase_back_value,       Types...>(enabled);
+    bench_types<bench_erase_back_value_swap,  Types...>(enabled);
     bench_types<bench_destruction,            Types...>(enabled);
     bench_types<bench_erase_1,                Types...>(enabled);
     bench_types<bench_erase_10,               Types...>(enabled);
