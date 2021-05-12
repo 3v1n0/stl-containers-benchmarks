@@ -26,10 +26,24 @@ benchmark('bench', bench,
 
 slow_timeout = meson.version().version_compare('>= 0.57.0') ? -1 : 18000
 
+benchmark('bench-main-types', bench,
+    timeout: slow_timeout,
+    env: [
+        'BENCH_TYPES=' + ':'.join([
+            'TrivialSmall',
+            'TrivialMedium',
+            'TrivialLarge',
+            'NonTrivialStringMovable',
+            'NonTrivialArray',
+        ]),
+    ],
+    suite: ['slow'],
+)
+
 benchmark('bench-full', bench,
     timeout: slow_timeout,
     env: ['BENCH_TYPES=full'],
-    suite: ['slow'],
+    suite: ['eternal'],
 )
 
 single_benchmarks = [
